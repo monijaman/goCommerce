@@ -1,2 +1,2 @@
 server:
-	nodemon --watch './**/*.go' --signal SIGTERM --exec APP_ENV=dev 'go' run application.go
+	npx cross-env APP_ENV=dev nodemon --watch './**/*.go' --signal SIGTERM --exec "go run main.go"

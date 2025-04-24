@@ -1,7 +1,6 @@
 package api
 
 import (
-	"github.com/gofiber/fiber/v2/middleware/cors"
 	"go-ecommerce-app/config"
 	"go-ecommerce-app/internal/api/rest"
 	"go-ecommerce-app/internal/api/rest/handlers"
@@ -9,6 +8,8 @@ import (
 	"go-ecommerce-app/internal/helper"
 	"go-ecommerce-app/pkg/payment"
 	"log"
+
+	"github.com/gofiber/fiber/v2/middleware/cors"
 
 	"github.com/gofiber/fiber/v2"
 	"gorm.io/driver/postgres"
@@ -73,7 +74,8 @@ func StartServer(config config.AppConfig) {
 
 	setupRoutes(rh)
 
-	app.Listen(config.ServerPort)
+	log.Fatal(app.Listen(config.ServerPort))
+	// app.Listen(config.ServerPort)
 
 }
 
