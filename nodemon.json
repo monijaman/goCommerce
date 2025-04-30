@@ -1,0 +1,9 @@
+{
+  "watch": ["."],
+  "ext": "go",
+  "signal": "SIGTERM",
+  "exec": "go run main.go",
+  "env": {
+    "APP_ENV": "dev"
+  }
+}

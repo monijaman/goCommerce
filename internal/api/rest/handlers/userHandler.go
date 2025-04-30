@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"errors"
-	"github.com/gofiber/fiber/v2"
 	"go-ecommerce-app/internal/api/rest"
 	"go-ecommerce-app/internal/dto"
 	"go-ecommerce-app/internal/repository"
@@ -10,6 +9,8 @@ import (
 	"log"
 	"net/http"
 	"strconv"
+
+	"github.com/gofiber/fiber/v2"
 )
 
 type UserHandler struct {
@@ -106,17 +107,17 @@ func (h *UserHandler) GetVerificationCode(ctx *fiber.Ctx) error {
 	user := h.svc.Auth.GetCurrentUser(ctx)
 	log.Println(user)
 	// create verification code and update to user profile in DB
-	err := h.svc.GetVerificationCode(user)
-	log.Println(err)
+	msg, err := h.svc.GetVerificationCode(user)
+	log.Printf("User------------------- %v", user)
 
 	if err != nil {
 		return ctx.Status(http.StatusInternalServerError).JSON(&fiber.Map{
 			"message": "unable to generate verification code",
 		})
 	}
-
+	log.Println(msg)
 	return ctx.Status(http.StatusOK).JSON(&fiber.Map{
-		"message": "get verification code",
+		"message": msg,
 	})
 
 }

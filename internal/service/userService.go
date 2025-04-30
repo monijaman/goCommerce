@@ -8,7 +8,6 @@ import (
 	"go-ecommerce-app/internal/dto"
 	"go-ecommerce-app/internal/helper"
 	"go-ecommerce-app/internal/repository"
-	"go-ecommerce-app/pkg/notification"
 	"log"
 	"time"
 )
@@ -69,17 +68,16 @@ func (s UserService) isVerifiedUser(id uint) bool {
 	return err == nil && currentUser.Verified
 }
 
-func (s UserService) GetVerificationCode(e domain.User) error {
-
+func (s UserService) GetVerificationCode(e domain.User) (string, error) {
 	// if user already verified
 	if s.isVerifiedUser(e.ID) {
-		return errors.New("user already verified")
+		return "", errors.New("user already verified")
 	}
 
 	// generate verification code
 	code, err := s.Auth.GenerateCode()
 	if err != nil {
-		return err
+		return "", err
 	}
 
 	// update user
@@ -89,25 +87,22 @@ func (s UserService) GetVerificationCode(e domain.User) error {
 	}
 
 	_, err = s.Repo.UpdateUser(e.ID, user)
-
 	if err != nil {
-		return errors.New("unable to update verification code")
+		return "", errors.New("unable to update verification code")
 	}
 
 	user, _ = s.Repo.FindUserById(e.ID)
 
-	// send SMS
-	notificationClient := notification.NewNotificationClient(s.Config)
-
 	msg := fmt.Sprintf("Your verification code is %v", code)
 
-	err = notificationClient.SendSMS(user.Phone, msg)
+	// send SMS (optional - uncomment to send)
+	// notificationClient := notification.NewNotificationClient(s.Config)
+	// err = notificationClient.SendSMS(user.Phone, msg)
 	if err != nil {
-		return errors.New("error on sending sms")
+		return "", errors.New("error on sending sms")
 	}
 
-	// return verification code
-	return nil
+	return msg, nil
 }
 
 func (s UserService) VerifyCode(id uint, code string) error {
